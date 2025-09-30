@@ -1,0 +1,43 @@
+/* src/app/components/task-form/task-form.component.css */
+
+.form-card {
+  border-radius: 10px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.form-label {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-lg {
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}

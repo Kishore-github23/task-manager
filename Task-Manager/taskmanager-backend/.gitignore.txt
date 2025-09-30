@@ -1,0 +1,23 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+*.iml
+*.log
+
+# Spring Boot
+application-*.yml
+application-*.properties
+
+# Angular
+node_modules/
+dist/
+src/environments/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store

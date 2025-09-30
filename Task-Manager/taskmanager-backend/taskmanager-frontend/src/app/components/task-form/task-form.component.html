@@ -1,0 +1,112 @@
+<!-- src/app/components/task-form/task-form.component.html -->
+
+<div class="card mb-4 shadow-lg border-0 form-card">
+  <div class="card-header bg-gradient text-white py-3">
+    <h4 class="mb-0">
+      {{ task ? '✏️ Edit Task' : '➕ Create New Task' }}
+    </h4>
+  </div>
+  
+  <div class="card-body p-4">
+    <form (ngSubmit)="onSubmit()" #taskForm="ngForm">
+      
+      <!-- Title Field -->
+      <div class="mb-3">
+        <label for="title" class="form-label fw-bold">
+          Title <span class="text-danger">*</span>
+        </label>
+        <input 
+          type="text" 
+          class="form-control form-control-lg" 
+          id="title" 
+          [(ngModel)]="formData.title" 
+          name="title" 
+          required
+          placeholder="Enter task title"
+          [disabled]="isSubmitting">
+      </div>
+
+      <!-- Description Field -->
+      <div class="mb-3">
+        <label for="description" class="form-label fw-bold">Description</label>
+        <textarea 
+          class="form-control" 
+          id="description" 
+          [(ngModel)]="formData.description" 
+          name="description" 
+          rows="4"
+          placeholder="Enter detailed description (optional)"
+          [disabled]="isSubmitting"></textarea>
+      </div>
+
+      <!-- Status, Priority, Due Date Row -->
+      <div class="row mb-3">
+        <!-- Status -->
+        <div class="col-md-4 mb-3 mb-md-0">
+          <label for="status" class="form-label fw-bold">Status</label>
+          <select 
+            class="form-select" 
+            id="status" 
+            [(ngModel)]="formData.status" 
+            name="status"
+            [disabled]="isSubmitting">
+            <option *ngFor="let status of statuses" [value]="status">
+              {{ getStatusText(status) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Priority -->
+        <div class="col-md-4 mb-3 mb-md-0">
+          <label for="priority" class="form-label fw-bold">Priority</label>
+          <select 
+            class="form-select" 
+            id="priority" 
+            [(ngModel)]="formData.priority" 
+            name="priority"
+            [disabled]="isSubmitting">
+            <option *ngFor="let priority of priorities" [value]="priority">
+              {{ priority }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Due Date -->
+        <div class="col-md-4">
+          <label for="dueDate" class="form-label fw-bold">Due Date</label>
+          <input 
+            type="datetime-local" 
+            class="form-control" 
+            id="dueDate" 
+            [(ngModel)]="formData.dueDate" 
+            name="dueDate"
+            [disabled]="isSubmitting">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <button 
+          type="button" 
+          class="btn btn-secondary btn-lg px-4" 
+          (click)="onCancel()"
+          [disabled]="isSubmitting">
+          ❌ Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-success btn-lg px-4"
+          [disabled]="isSubmitting || !taskForm.form.valid">
+          <span *ngIf="!isSubmitting">
+            {{ task ? '💾 Update Task' : '➕ Create Task' }}
+          </span>
+          <span *ngIf="isSubmitting">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Saving...
+          </span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
