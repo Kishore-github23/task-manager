@@ -29,7 +29,6 @@ task-manager/
 ---
 
 ## ⚙️ Backend (Spring Boot)
-
 ### Prerequisites
 - Java 17+  
 - Maven 3+  
@@ -51,21 +50,16 @@ Backend runs on: http://localhost:8080
 Prerequisites
 
 Node.js 18+
-
 Angular CLI
 
 Setup
 
 Install dependencies:
-
 cd taskmanager-frontend
 npm install
 
-
 Run frontend:
-
 ng serve
-
 
 Frontend runs on: http://localhost:4200
 
@@ -77,4 +71,12 @@ Search Tasks – Search by task title in real time.
 Update Status – Change task status quickly.
 Edit Task – Modify task details.
 Delete Task – Remove task from the list.
+
+🚀 Future Improvements
+
+User authentication (JWT)
+Multi-user support
+Email reminders for due tasks
+Cloud deployment (Heroku / Render + Netlify / Vercel)
+
 
