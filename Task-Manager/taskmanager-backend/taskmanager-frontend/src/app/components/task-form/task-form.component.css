@@ -1,43 +1,255 @@
-/* src/app/components/task-form/task-form.component.css */
-
 .form-card {
-  border-radius: 10px;
-  animation: slideDown 0.3s ease-out;
+  border-radius: 15px;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-40px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .card-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px 10px 0 0 !important;
+  border-radius: 15px 15px 0 0 !important;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-header h4 {
+  position: relative;
+  color: #3f3f3f;
+  z-index: 1;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(165, 164, 164, 0.2);
+}
+
+/* ===== FORM BODY ===== */
+.card-body {
+  background: #ffffff;
+  padding: 2rem;
+}
+
+/* ===== FORM LABELS ===== */
 .form-label {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-label::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.text-danger {
+  color: #dc3545;
+  font-size: 1.1rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ===== FORM CONTROLS ===== */
+.form-control,
+.form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-control:focus,
 .form-select:focus {
   border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.25);
+  transform: scale(1.01);
 }
 
-.btn-lg {
-  padding: 0.75rem 2rem;
-  font-weight: 600;
+.form-control:disabled,
+.form-select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
+.form-control-lg {
+  padding: 1rem 1.25rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+}
+
+/* ===== TEXTAREA ===== */
 textarea.form-control {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+textarea.form-control::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea.form-control::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+textarea.form-control::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 4px;
+}
+
+textarea.form-control::-webkit-scrollbar-thumb:hover {
+  background: #5568d3;
+}
+
+/* ===== ROW SPACING ===== */
+.row.mb-3 {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.row.mb-3 > div {
+  padding: 0 0.5rem;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-lg {
+  padding: 0.85rem 2.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-lg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn-lg:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  border: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(108, 117, 125, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  border: none;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(40, 167, 69, 0.4);
+}
+
+.btn-success:disabled,
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15rem;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .form-control-lg {
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+  }
+
+  .row.mb-3 {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
