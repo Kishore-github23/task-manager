@@ -32,6 +32,20 @@
   }
 }
 
+/* Logo styles */
+.logo-title {
+  display: flex;
+  align-items: center;         /* Vertically center the image and text */
+  justify-content: center;     /* Center the entire heading (optional) */
+  gap: 10px;                   /* Add space between image and text */
+}
+
+.logo-icon {
+  width: 80px;                 /* Adjust the logo size */
+  height: 80px;                /* Keep it square */
+  object-fit: contain;         /* Prevent distortion */
+}
+
 /* ===== ACTION BAR ENHANCEMENTS ===== */
 .btn-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
