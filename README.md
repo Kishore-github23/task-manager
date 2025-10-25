@@ -12,6 +12,7 @@ A full-stack task manager application built with **Spring Boot (Java)** for the 
 - ✅ Responsive design with Bootstrap  
 - ✅ Real-time updates
 - ✅ User authentication (JWT)
+- ✅ Archiving the tasks, Soft delete and Restoring Options
 
 ---
 
