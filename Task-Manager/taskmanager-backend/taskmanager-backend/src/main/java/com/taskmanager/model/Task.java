@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,6 +38,17 @@ public class Task {
     @Column(name = "due_date")
     private LocalDateTime dueDate;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
+    
+    @Column(nullable = false)
+    private boolean archived = false;
+    
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+    
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
@@ -53,7 +66,10 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
     
-    // Enums
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
+    
     public enum TaskStatus {
         TODO, IN_PROGRESS, COMPLETED
     }
