@@ -10,7 +10,8 @@ A full-stack task manager application built with **Spring Boot (Java)** for the 
 - ✅ Set due dates  
 - ✅ Quick status updates  
 - ✅ Responsive design with Bootstrap  
-- ✅ Real-time updates  
+- ✅ Real-time updates
+- ✅ User authentication (JWT)
 
 ---
 
@@ -74,7 +75,6 @@ Delete Task – Remove task from the list.
 
 🚀 Future Improvements
 
-User authentication (JWT)
 Multi-user support
 Email reminders for due tasks
 Cloud deployment (Heroku / Render + Netlify / Vercel)
