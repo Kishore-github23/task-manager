@@ -1,9 +1,9 @@
 // src/app/services/task.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Task, TaskStatus } from '../models/task.model';
+import { PagedTasks, Task, TaskPriority, TaskStatus } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +51,75 @@ export class TaskService {
   // Delete task
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  // ===== NEW METHODS FOR PHASE 1 =====
+
+  // Get tasks with pagination
+  getTasksPaginated(page: number = 0, size: number = 10, sortBy: string = 'createdAt', sortDir: string = 'desc'): Observable<PagedTasks> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sortBy', sortBy)
+      .set('sortDir', sortDir)
+      .set('paginate', 'true');
+    
+    return this.http.get<PagedTasks>(this.apiUrl, { params });
+  }
+
+  // Advanced filtering
+  filterTasks(
+    status?: TaskStatus,
+    priority?: TaskPriority,
+    archived?: boolean,
+    keyword?: string,
+    page: number = 0,
+    size: number = 10
+  ): Observable<PagedTasks> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (status) params = params.set('status', status);
+    if (priority) params = params.set('priority', priority);
+    if (archived !== undefined) params = params.set('archived', archived.toString());
+    if (keyword) params = params.set('keyword', keyword);
+
+    return this.http.get<PagedTasks>(`${this.apiUrl}/filter`, { params });
+  }
+
+  // Get archived tasks
+  getArchivedTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/archived`);
+  }
+
+  // Get deleted tasks
+  getDeletedTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/deleted`);
+  }
+
+  // Archive task
+  archiveTask(id: number): Observable<Task> {
+    return this.http.patch<Task>(`${this.apiUrl}/${id}/archive`, {});
+  }
+
+  // Unarchive task
+  unarchiveTask(id: number): Observable<Task> {
+    return this.http.patch<Task>(`${this.apiUrl}/${id}/unarchive`, {});
+  }
+
+  // Restore deleted task
+  restoreTask(id: number): Observable<Task> {
+    return this.http.patch<Task>(`${this.apiUrl}/${id}/restore`, {});
+  }
+
+  // Permanent delete
+  permanentlyDeleteTask(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}/permanent`);
+  }
+
+  // Get tasks by priority
+  getTasksByPriority(priority: TaskPriority): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/priority/${priority}`);
   }
 }

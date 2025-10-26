@@ -1,36 +1,72 @@
 <!-- src/app/components/task-list/task-list.component.html -->
+<app-navbar></app-navbar>
 
 <div class="container mt-4">
-  <!-- Header -->
+  <!-- View Mode Tabs -->
   <div class="row mb-4">
-    <div class="col text-center">
-      <h1 class="display-4 fw-bold text-primary logo-title">
-        <img src="assets\logo.png" class="logo-icon">
-        Task Manager
-      </h1>
-      <p class="text-muted">Organize your tasks efficiently</p>
+    <div class="col">
+      <div class="btn-group w-100" role="group">
+        <button 
+          type="button" 
+          class="btn btn-lg"
+          [class.btn-primary]="viewMode === 'active'"
+          [class.btn-outline-primary]="viewMode !== 'active'"
+          (click)="changeViewMode('active')">
+          📋 Active Tasks
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-lg"
+          [class.btn-warning]="viewMode === 'archived'"
+          [class.btn-outline-warning]="viewMode !== 'archived'"
+          (click)="changeViewMode('archived')">
+          📦 Archived
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-lg"
+          [class.btn-danger]="viewMode === 'deleted'"
+          [class.btn-outline-danger]="viewMode !== 'deleted'"
+          (click)="changeViewMode('deleted')">
+          🗑️ Deleted
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Action Bar -->
   <div class="row mb-4">
-    <div class="col-md-4 mb-2">
-      <button class="btn btn-primary w-100 btn-lg" (click)="openForm()">
-        <i class="bi bi-plus-circle"></i> ✚ Add New Task
+    <div class="col-md-3 mb-2">
+      <button 
+        class="btn btn-success w-100 btn-lg" 
+        (click)="openForm()"
+        [disabled]="viewMode !== 'active'">
+        ✨ Add New Task
       </button>
     </div>
-    <div class="col-md-4 mb-2">
+    <div class="col-md-3 mb-2">
       <select 
         class="form-select form-select-lg" 
         [(ngModel)]="filterStatus" 
         (change)="onFilterChange()">
-        <option value="ALL">📊 All Tasks</option>
+        <option value="ALL">📊 All Status</option>
         <option value="TODO">📝 To Do</option>
         <option value="IN_PROGRESS">⏳ In Progress</option>
         <option value="COMPLETED">✅ Completed</option>
       </select>
     </div>
-    <div class="col-md-4 mb-2">
+    <div class="col-md-3 mb-2">
+      <select 
+        class="form-select form-select-lg" 
+        [(ngModel)]="filterPriority" 
+        (change)="onFilterChange()">
+        <option value="ALL">🎯 All Priority</option>
+        <option value="HIGH">🔴 High</option>
+        <option value="MEDIUM">🟡 Medium</option>
+        <option value="LOW">🟢 Low</option>
+      </select>
+    </div>
+    <div class="col-md-3 mb-2">
       <input 
         type="text" 
         class="form-control form-control-lg" 
@@ -60,13 +96,21 @@
   <div class="row" *ngIf="!isLoading && filteredTasks.length === 0">
     <div class="col-12">
       <div class="alert alert-info text-center shadow-sm">
-        <h4>📭 No tasks found</h4>
+        <h4>🔭 No tasks found</h4>
         <p class="mb-0">
-          <span *ngIf="searchKeyword || filterStatus !== 'ALL'">
-            Try adjusting your filters or search terms.
+          <span *ngIf="viewMode === 'active'">
+            <span *ngIf="searchKeyword || filterStatus !== 'ALL' || filterPriority !== 'ALL'">
+              Try adjusting your filters or search terms.
+            </span>
+            <span *ngIf="!searchKeyword && filterStatus === 'ALL' && filterPriority === 'ALL'">
+              Create your first task to get started!
+            </span>
           </span>
-          <span *ngIf="!searchKeyword && filterStatus === 'ALL'">
-            Create your first task to get started!
+          <span *ngIf="viewMode === 'archived'">
+            No archived tasks found.
+          </span>
+          <span *ngIf="viewMode === 'deleted'">
+            No deleted tasks found.
           </span>
         </p>
       </div>
@@ -105,46 +149,89 @@
             </small>
           </div>
 
-          <!-- Status Update Buttons -->
-          <div class="btn-group mb-3" role="group">
-            <button 
-              type="button"
-              class="btn btn-sm btn-outline-secondary"
-              (click)="updateStatus(task, TaskStatus.TODO)"
-              [disabled]="task.status === TaskStatus.TODO"
-              title="Mark as To Do">
-              📝
-            </button>
-            <button 
-              type="button"
-              class="btn btn-sm btn-outline-primary"
-              (click)="updateStatus(task, TaskStatus.IN_PROGRESS)"
-              [disabled]="task.status === TaskStatus.IN_PROGRESS"
-              title="Mark as In Progress">
-              ⏳
-            </button>
-            <button 
-              type="button"
-              class="btn btn-sm btn-outline-success"
-              (click)="updateStatus(task, TaskStatus.COMPLETED)"
-              [disabled]="task.status === TaskStatus.COMPLETED"
-              title="Mark as Completed">
-              ✅
-            </button>
+          <!-- ACTIVE VIEW ACTIONS -->
+          <div *ngIf="viewMode === 'active'">
+            <!-- Status Update Buttons -->
+            <div class="btn-group mb-3" role="group">
+              <button 
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                (click)="updateStatus(task, TaskStatus.TODO)"
+                [disabled]="task.status === TaskStatus.TODO"
+                title="Mark as To Do">
+                📝
+              </button>
+              <button 
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                (click)="updateStatus(task, TaskStatus.IN_PROGRESS)"
+                [disabled]="task.status === TaskStatus.IN_PROGRESS"
+                title="Mark as In Progress">
+                ⏳
+              </button>
+              <button 
+                type="button"
+                class="btn btn-sm btn-outline-success"
+                (click)="updateStatus(task, TaskStatus.COMPLETED)"
+                [disabled]="task.status === TaskStatus.COMPLETED"
+                title="Mark as Completed">
+                ✅
+              </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+              <button 
+                class="btn btn-warning btn-sm" 
+                (click)="openForm(task)">
+                ✏️ Edit Task
+              </button>
+              <button 
+                class="btn btn-secondary btn-sm" 
+                (click)="archiveTask(task.id)">
+                📦 Archive Task
+              </button>
+              <button 
+                class="btn btn-danger btn-sm" 
+                (click)="deleteTask(task.id)">
+                🗑️ Delete Task
+              </button>
+            </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="d-grid gap-2">
-            <button 
-              class="btn btn-warning btn-sm" 
-              (click)="openForm(task)">
-              ✏️ Edit Task
-            </button>
-            <button 
-              class="btn btn-danger btn-sm" 
-              (click)="deleteTask(task.id)">
-              🗑️ Delete Task
-            </button>
+          <!-- ARCHIVED VIEW ACTIONS -->
+          <div *ngIf="viewMode === 'archived'">
+            <div class="d-grid gap-2">
+              <button 
+                class="btn btn-success btn-sm" 
+                (click)="unarchiveTask(task.id)">
+                ↩️ Restore to Active
+              </button>
+              <button 
+                class="btn btn-danger btn-sm" 
+                (click)="deleteTask(task.id)">
+                🗑️ Move to Trash
+              </button>
+            </div>
+          </div>
+
+          <!-- DELETED VIEW ACTIONS -->
+          <div *ngIf="viewMode === 'deleted'">
+            <div class="alert alert-warning mb-3">
+              <small>⚠️ This task is in trash</small>
+            </div>
+            <div class="d-grid gap-2">
+              <button 
+                class="btn btn-success btn-sm" 
+                (click)="restoreTask(task.id)">
+                ♻️ Restore Task
+              </button>
+              <button 
+                class="btn btn-danger btn-sm" 
+                (click)="permanentlyDeleteTask(task.id)">
+                ❌ Delete Permanently
+              </button>
+            </div>
           </div>
 
           <!-- Timestamp -->

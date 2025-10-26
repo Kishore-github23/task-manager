@@ -16,7 +16,11 @@ export class TaskListComponent implements OnInit {
   showForm = false;
   searchKeyword = '';
   filterStatus: TaskStatus | 'ALL' = 'ALL';
+  filterPriority: TaskPriority | 'ALL' = 'ALL';  // NEW
   isLoading = false;
+
+  // NEW: View modes
+  viewMode: 'active' | 'archived' | 'deleted' = 'active';
 
   // Make enums available to template
   TaskStatus = TaskStatus;
@@ -28,68 +32,107 @@ export class TaskListComponent implements OnInit {
     this.loadTasks();
   }
 
-  // Load all tasks from backend
   loadTasks(): void {
     this.isLoading = true;
-    this.taskService.getAllTasks().subscribe({
-      next: (data) => {
-        this.tasks = data;
-        this.applyFilter();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading tasks:', error);
-        alert('Failed to load tasks. Make sure backend is running on port 8080!');
-        this.isLoading = false;
-      }
-    });
+    
+    if (this.viewMode === 'archived') {
+      this.taskService.getArchivedTasks().subscribe({
+        next: (data) => {
+          this.tasks = data;
+          this.applyFilter();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading archived tasks:', error);
+          alert('Failed to load archived tasks!');
+          this.isLoading = false;
+        }
+      });
+    } else if (this.viewMode === 'deleted') {
+      this.taskService.getDeletedTasks().subscribe({
+        next: (data) => {
+          this.tasks = data;
+          this.applyFilter();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading deleted tasks:', error);
+          alert('Failed to load deleted tasks!');
+          this.isLoading = false;
+        }
+      });
+    } else {
+      // Active tasks (default)
+      this.taskService.getAllTasks().subscribe({
+        next: (data) => {
+          this.tasks = data;
+          this.applyFilter();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading tasks:', error);
+          alert('Failed to load tasks. Make sure backend is running on port 8080!');
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
-  // Apply filters (status and search)
+  // Apply filters (status, priority, and search)
   applyFilter(): void {
-    if (this.filterStatus === 'ALL') {
-      this.filteredTasks = this.tasks;
-    } else {
-      this.filteredTasks = this.tasks.filter(task => task.status === this.filterStatus);
+    let filtered = [...this.tasks];
+
+    // Filter by status
+    if (this.filterStatus !== 'ALL') {
+      filtered = filtered.filter(task => task.status === this.filterStatus);
     }
 
+    // NEW: Filter by priority
+    if (this.filterPriority !== 'ALL') {
+      filtered = filtered.filter(task => task.priority === this.filterPriority);
+    }
+
+    // Filter by search keyword
     if (this.searchKeyword.trim()) {
-      this.filteredTasks = this.filteredTasks.filter(task =>
-        task.title.toLowerCase().includes(this.searchKeyword.toLowerCase()) ||
-        (task.description && task.description.toLowerCase().includes(this.searchKeyword.toLowerCase()))
+      const keyword = this.searchKeyword.toLowerCase();
+      filtered = filtered.filter(task =>
+        task.title.toLowerCase().includes(keyword) ||
+        (task.description && task.description.toLowerCase().includes(keyword))
       );
     }
+
+    this.filteredTasks = filtered;
   }
 
-  // Filter change handler
   onFilterChange(): void {
     this.applyFilter();
   }
 
-  // Search handler
   onSearch(): void {
     this.applyFilter();
   }
 
-  // Open form for creating or editing task
+  // NEW: Change view mode
+  changeViewMode(mode: 'active' | 'archived' | 'deleted'): void {
+    this.viewMode = mode;
+    this.loadTasks();
+  }
+
   openForm(task?: Task): void {
     this.selectedTask = task || null;
     this.showForm = true;
   }
 
-  // Close form
   closeForm(): void {
     this.showForm = false;
     this.selectedTask = null;
   }
 
-  // Handle task saved event
   onTaskSaved(): void {
     this.loadTasks();
     this.closeForm();
   }
 
-  // Update task status
   updateStatus(task: Task, status: TaskStatus): void {
     if (task.id) {
       this.taskService.updateTaskStatus(task.id, status).subscribe({
@@ -104,7 +147,7 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  // Delete task
+  // Delete task (soft delete)
   deleteTask(id: number | undefined): void {
     if (id && confirm('Are you sure you want to delete this task?')) {
       this.taskService.deleteTask(id).subscribe({
@@ -119,7 +162,66 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  // Get CSS class for priority badge
+  // NEW: Archive task
+  archiveTask(id: number | undefined): void {
+    if (id && confirm('Are you sure you want to archive this task?')) {
+      this.taskService.archiveTask(id).subscribe({
+        next: () => {
+          this.loadTasks();
+        },
+        error: (error) => {
+          console.error('Error archiving task:', error);
+          alert('Failed to archive task!');
+        }
+      });
+    }
+  }
+
+  // NEW: Unarchive task
+  unarchiveTask(id: number | undefined): void {
+    if (id && confirm('Do you want to restore this task?')) {
+      this.taskService.unarchiveTask(id).subscribe({
+        next: () => {
+          this.loadTasks();
+        },
+        error: (error) => {
+          console.error('Error unarchiving task:', error);
+          alert('Failed to unarchive task!');
+        }
+      });
+    }
+  }
+
+  // NEW: Restore deleted task
+  restoreTask(id: number | undefined): void {
+    if (id && confirm('Do you want to restore this task?')) {
+      this.taskService.restoreTask(id).subscribe({
+        next: () => {
+          this.loadTasks();
+        },
+        error: (error) => {
+          console.error('Error restoring task:', error);
+          alert('Failed to restore task!');
+        }
+      });
+    }
+  }
+
+  // NEW: Permanent delete
+  permanentlyDeleteTask(id: number | undefined): void {
+    if (id && confirm('⚠️ This will PERMANENTLY delete the task. This action cannot be undone. Are you sure?')) {
+      this.taskService.permanentlyDeleteTask(id).subscribe({
+        next: () => {
+          this.loadTasks();
+        },
+        error: (error) => {
+          console.error('Error permanently deleting task:', error);
+          alert('Failed to permanently delete task!');
+        }
+      });
+    }
+  }
+
   getPriorityClass(priority: TaskPriority): string {
     switch (priority) {
       case TaskPriority.HIGH:
@@ -133,7 +235,6 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  // Get CSS class for status badge
   getStatusClass(status: TaskStatus): string {
     switch (status) {
       case TaskStatus.TODO:
@@ -147,7 +248,6 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  // Format status display text
   getStatusText(status: TaskStatus): string {
     return status.replace('_', ' ');
   }
